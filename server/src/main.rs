@@ -40,10 +40,17 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
     }
 }
 
-async fn index(request: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
+async fn echo(request: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
     println!("{:?}", &request);
-    let host = &request.headers().get("host").unwrap().to_str().unwrap();
-    let header_value = actix_web::http::HeaderValue::from_str(host).unwrap();
+    // let host = &request.headers().get("host").unwrap().to_str().unwrap();
+    // let header_value = actix_web::http::HeaderValue::from_str(host).unwrap();
+    let client = &request
+        .headers()
+        .get("sec-websocket-key")
+        .unwrap()
+        .to_str()
+        .unwrap();
+    let header_value = actix_web::http::HeaderValue::from_str(client).unwrap();
     let response = ws::start(WebsocketServer { host: header_value }, &request, stream);
     println!("{:?}", response);
     response
@@ -51,7 +58,7 @@ async fn index(request: HttpRequest, stream: web::Payload) -> Result<HttpRespons
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    HttpServer::new(|| App::new().route("/ws/", web::get().to(index)))
+    HttpServer::new(|| App::new().route("/echo/", web::get().to(echo)))
         .bind("127.0.0.1:8080")?
         .run()
         .await
