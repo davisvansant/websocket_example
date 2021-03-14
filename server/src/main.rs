@@ -17,6 +17,20 @@ impl Actor for State {
     }
 }
 
+impl actix::Handler<SomeMessage> for State {
+    type Result = ();
+
+    fn handle(
+        &mut self,
+        msg: SomeMessage,
+        // _: &mut actix_web_actors::ws::WebsocketContext<Self>,
+        _: &mut actix::Context<Self>,
+    ) -> Self::Result {
+        println!("something");
+        println!("{:?}", msg.something);
+    }
+}
+
 #[derive(Debug, actix::Message)]
 #[rtype(result = "()")]
 struct SomeMessage {
@@ -35,6 +49,17 @@ impl Actor for WebsocketServer {
         println!("Actor Started");
         println!("{:?}", self);
         // println!("{:?}", ctx.set_mailbox_capacity(100));
+        let channel = actix::dev::channel::channel::<State>(10);
+        println!("{:?}", channel.0);
+        // println!("{:?}", channel.1);
+        let send = channel.0.send(SomeMessage {
+            something: String::from("welcome to websockets"),
+        });
+
+        match send {
+            Ok(result) => println!("ok on start {:?}", result),
+            Err(error) => println!("something didnt happen = {:?}", error),
+        }
     }
 }
 
@@ -63,6 +88,13 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
                 println!("client - {:?}", self.host);
                 println!("test - {:?}", &text);
                 // ctx.text(text);
+                let channel = actix::dev::channel::channel::<State>(10);
+                let send = channel.0.send(SomeMessage { something: text });
+
+                match send {
+                    Ok(result) => println!("sent {:?}", result),
+                    Err(error) => println!("something didnt happen = {:?}", error),
+                }
             }
             Ok(ws::Message::Binary(bin)) => ctx.binary(bin),
             Ok(ws::Message::Close(close)) => {
@@ -86,7 +118,7 @@ async fn echo(
     stream: web::Payload,
     data: web::Data<std::sync::Mutex<Vec<String>>>,
     // state: web::Data<State>,
-    state: web::Data<std::sync::Mutex<State>>,
+    // state: web::Data<std::sync::Mutex<State>>,
 ) -> Result<HttpResponse, Error> {
     println!("{:?}", &request);
     // let host = &request.headers().get("host").unwrap().to_str().unwrap();
@@ -112,8 +144,8 @@ async fn echo(
             // state.clients.push(actor);
             // let mut clients = state.clients.lock().unwrap();
             // clients.push(actor);
-            let mut clients = state.lock().unwrap();
-            clients.clients.push(actor);
+            // let mut clients = state.lock().unwrap();
+            // clients.clients.push(actor);
             // clients.push(actor);
 
             // managed.push(String::from("hi"));
@@ -126,9 +158,9 @@ async fn echo(
 
             // println!("{:?}", actor);
 
-            let something_to_send = SomeMessage {
-                something: String::from("welcome to websockets"),
-            };
+            // let something_to_send = SomeMessage {
+            //     something: String::from("welcome to websockets"),
+            // };
 
             // actor.do_send(something_to_send);
 
@@ -155,8 +187,17 @@ async fn main() -> std::io::Result<()> {
 
     let state_vec: Vec<actix::Addr<WebsocketServer>> = Vec::with_capacity(10);
     let state_struct = State { clients: state_vec }.start();
-    let state_mutex = std::sync::Mutex::new(state_struct);
-    let system_state = web::Data::new(state_mutex);
+
+    println!("{:?}", &state_struct);
+
+    // let state_mutex = std::sync::Mutex::new(state_struct);
+
+    // println!("{:?}", &state_mutex);
+
+    // let system_state = web::Data::new(state_mutex);
+    let system_state = web::Data::new(state_struct);
+
+    println!("{:?}", &system_state);
 
     // let system_state = web::Data::new(State { clients: std::sync::Mutex::new(Vec::with_capacity(10)) }).start();
 
