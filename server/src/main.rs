@@ -2,7 +2,7 @@ use actix::{Actor, StreamHandler};
 use actix_web::{web, App, Error, HttpRequest, HttpResponse, HttpServer};
 use actix_web_actors::ws;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Default, Clone)]
 struct State {
     // clients: std::sync::Mutex<Vec<actix::Addr<WebsocketServer>>>,
     clients: Vec<actix::Addr<WebsocketServer>>,
@@ -26,8 +26,16 @@ impl actix::Handler<SomeMessage> for State {
         // _: &mut actix_web_actors::ws::WebsocketContext<Self>,
         _: &mut actix::Context<Self>,
     ) -> Self::Result {
-        println!("something");
-        println!("{:?}", msg.something);
+        println!("State has received something!");
+        println!("The message state received = {:?}", msg.something);
+    }
+}
+
+impl actix::Supervised for State {}
+
+impl actix::SystemService for State {
+    fn service_started(&mut self, ctx: &mut actix::Context<Self>) {
+        println!("Service started");
     }
 }
 
@@ -71,8 +79,8 @@ impl actix::Handler<SomeMessage> for WebsocketServer {
         msg: SomeMessage,
         _: &mut actix_web_actors::ws::WebsocketContext<Self>,
     ) -> Self::Result {
-        println!("something");
-        println!("{:?}", msg.something);
+        println!("Websocket Actor has received something");
+        println!("Message = {:?}", msg.something);
     }
 }
 
@@ -87,14 +95,26 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
                 println!("text recieved!");
                 println!("client - {:?}", self.host);
                 println!("test - {:?}", &text);
-                // ctx.text(text);
-                let channel = actix::dev::channel::channel::<State>(10);
-                let send = channel.0.send(SomeMessage { something: text });
 
-                match send {
-                    Ok(result) => println!("sent {:?}", result),
-                    Err(error) => println!("something didnt happen = {:?}", error),
-                }
+                use actix::SystemService;
+
+                let addr = State::from_registry();
+                // println!("{:?}", addr);
+                // let sender = addr.send(SomeMessage { something: text});
+                addr.do_send(SomeMessage { something: text });
+
+                // match sender {
+                //     Ok(something) => println!("something might have happened {}", something),
+                //     Err(error) => println!("I dont think it happened {:?}", error),
+                // }
+                // ctx.text(text);
+                // let channel = actix::dev::channel::channel::<State>(10);
+                // let send = channel.0.send(SomeMessage { something: text });
+                //
+                // match send {
+                //     Ok(result) => println!("sent {:?}", result),
+                //     Err(error) => println!("something didnt happen = {:?}", error),
+                // }
             }
             Ok(ws::Message::Binary(bin)) => ctx.binary(bin),
             Ok(ws::Message::Close(close)) => {
