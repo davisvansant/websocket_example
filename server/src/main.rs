@@ -139,6 +139,7 @@ async fn echo(
     data: web::Data<std::sync::Mutex<Vec<String>>>,
     // state: web::Data<State>,
     // state: web::Data<std::sync::Mutex<State>>,
+    state: web::Data<actix::Addr<State>>,
 ) -> Result<HttpResponse, Error> {
     println!("{:?}", &request);
     // let host = &request.headers().get("host").unwrap().to_str().unwrap();
@@ -211,20 +212,21 @@ async fn main() -> std::io::Result<()> {
     println!("{:?}", &state_struct);
 
     // let state_mutex = std::sync::Mutex::new(state_struct);
+    // std::sync::Mutex::new(state_struct);
 
     // println!("{:?}", &state_mutex);
 
     // let system_state = web::Data::new(state_mutex);
     let system_state = web::Data::new(state_struct);
 
-    println!("{:?}", &system_state);
+    // println!("{:?}", &system_state);
 
     // let system_state = web::Data::new(State { clients: std::sync::Mutex::new(Vec::with_capacity(10)) }).start();
 
     HttpServer::new(move || {
         App::new()
             .app_data(state.clone())
-            .data(system_state.clone())
+            .app_data(system_state.clone())
             .route("/echo/", web::get().to(echo))
     })
     .bind("127.0.0.1:8080")?
