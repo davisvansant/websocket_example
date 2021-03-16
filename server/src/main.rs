@@ -5,12 +5,14 @@ use actix_web_actors::ws;
 #[derive(Debug, Default, Clone)]
 struct State {
     // clients: std::sync::Mutex<Vec<actix::Addr<WebsocketServer>>>,
-    clients: Vec<actix::Addr<WebsocketServer>>,
+    // clients: Vec<actix::Addr<WebsocketServer>>,
+    clients: Vec<actix::Recipient<SomeMessage>>,
 }
 
 impl State {
     pub async fn collector(&mut self, actor: actix::Addr<WebsocketServer>) {
-        self.clients.push(actor);
+        // self.clients.push(actor);
+        self.clients.push(actor.recipient());
         println!("addr pushed");
         println!("{:?}", self.clients);
     }
@@ -37,6 +39,14 @@ impl actix::Handler<SomeMessage> for State {
     ) -> Self::Result {
         println!("State has received something!");
         println!("The message state received = {:?}", msg.something);
+        use actix::AsyncContext;
+        // context.address().do_send(msg);
+        for c in &self.clients {
+            c.do_send(SomeMessage {
+                something: String::from("something here is good"),
+            })
+            .unwrap();
+        }
     }
 }
 
@@ -93,6 +103,10 @@ impl actix::Handler<SomeMessage> for WebsocketServer {
     }
 }
 
+impl actix::Message for WebsocketServer {
+    type Result = ();
+}
+
 impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
     fn handle(&mut self, msg: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
         match msg {
@@ -111,6 +125,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
                 // println!("{:?}", addr);
                 // let sender = addr.send(SomeMessage { something: text});
                 addr.do_send(SomeMessage { something: text });
+                ctx.text(String::from("something here"));
 
                 // match sender {
                 //     Ok(something) => println!("something might have happened {}", something),
@@ -216,7 +231,8 @@ async fn main() -> std::io::Result<()> {
     let app_state = std::sync::Mutex::new(vec);
     let state = web::Data::new(app_state);
 
-    let state_vec: Vec<actix::Addr<WebsocketServer>> = Vec::with_capacity(10);
+    // let state_vec: Vec<actix::Addr<WebsocketServer>> = Vec::with_capacity(10);
+    let state_vec: Vec<actix::Recipient<SomeMessage>> = Vec::with_capacity(10);
     // let state_struct = State { clients: state_vec }.start();
     let state_struct = State { clients: state_vec };
 
