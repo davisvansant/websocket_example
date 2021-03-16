@@ -28,6 +28,21 @@ impl Actor for State {
     }
 }
 
+impl actix::Handler<RegisterClient> for State {
+    type Result = ();
+
+    fn handle(
+        &mut self,
+        RegisterClient(some_actor): RegisterClient,
+        // _: &mut actix_web_actors::ws::WebsocketContext<Self>,
+        context: &mut actix::Context<Self>,
+    ) -> Self::Result {
+        println!("Before message - {:?}", self.clients.len());
+        self.clients.push(some_actor.recipient());
+        println!("After message = {:?}", self.clients.len());
+    }
+}
+
 impl actix::Handler<SomeMessage> for State {
     type Result = ();
 
@@ -37,13 +52,14 @@ impl actix::Handler<SomeMessage> for State {
         // _: &mut actix_web_actors::ws::WebsocketContext<Self>,
         context: &mut actix::Context<Self>,
     ) -> Self::Result {
+        println!("do I have clients?{:?}", self.clients.len());
+        // self.clients.push(msg);
         println!("State has received something!");
         println!("The message state received = {:?}", msg.something);
-        use actix::AsyncContext;
-        // context.address().do_send(msg);
         for c in &self.clients {
+            println!("am I connected? {:?}", c.connected());
             c.do_send(SomeMessage {
-                something: String::from("something here is good"),
+                something: String::from("welcome to websockets"),
             })
             .unwrap();
         }
@@ -57,6 +73,10 @@ impl actix::SystemService for State {
         println!("Service started");
     }
 }
+
+#[derive(Debug, actix::Message)]
+#[rtype(result = "()")]
+struct RegisterClient(actix::Addr<WebsocketServer>);
 
 #[derive(Debug, actix::Message)]
 #[rtype(result = "()")]
@@ -75,6 +95,13 @@ impl Actor for WebsocketServer {
     fn started(&mut self, ctx: &mut Self::Context) {
         println!("Actor Started");
         println!("{:?}", self);
+        use actix::AsyncContext;
+        use actix::SystemService;
+
+        let addr = State::from_registry();
+        // println!("{:?}", addr);
+        // let sender = addr.send(SomeMessage { something: text});
+        addr.do_send(RegisterClient(ctx.address()));
         // println!("{:?}", ctx.set_mailbox_capacity(100));
         let channel = actix::dev::channel::channel::<State>(10);
         println!("{:?}", channel.0);
@@ -98,6 +125,7 @@ impl actix::Handler<SomeMessage> for WebsocketServer {
         msg: SomeMessage,
         _: &mut actix_web_actors::ws::WebsocketContext<Self>,
     ) -> Self::Result {
+        println!("Whoami? {:?}", self);
         println!("Websocket Actor has received something");
         println!("Message = {:?}", msg.something);
     }
@@ -161,7 +189,7 @@ async fn echo(
     request: HttpRequest,
     stream: web::Payload,
     data: web::Data<std::sync::Mutex<Vec<String>>>,
-    state: web::Data<std::sync::Mutex<State>>,
+    // state: web::Data<std::sync::Mutex<State>>,
     // state: web::Data<std::sync::Mutex<State>>,
     // state: web::Data<actix::Addr<State>>,
 ) -> Result<HttpResponse, Error> {
@@ -187,8 +215,10 @@ async fn echo(
             // let mut managed = data.lock().unwrap();
 
             // state.clients.push(actor);
-            let mut clients = state.lock().unwrap();
-            clients.collector(actor).await;
+            // let mut clients = state.lock().unwrap();
+            // clients.collector(actor).await;
+            // drop(clients);
+            // drop(state);
             // clients.clients.push(actor);
             // let mut clients = state.lock().unwrap();
             // clients.clients.push(actor);
@@ -232,18 +262,18 @@ async fn main() -> std::io::Result<()> {
     let state = web::Data::new(app_state);
 
     // let state_vec: Vec<actix::Addr<WebsocketServer>> = Vec::with_capacity(10);
-    let state_vec: Vec<actix::Recipient<SomeMessage>> = Vec::with_capacity(10);
+    // let state_vec: Vec<actix::Recipient<SomeMessage>> = Vec::with_capacity(10);
     // let state_struct = State { clients: state_vec }.start();
-    let state_struct = State { clients: state_vec };
+    // let state_struct = State { clients: state_vec };
 
-    println!("{:?}", &state_struct);
+    // println!("{:?}", &state_struct);
 
-    let state_mutex = std::sync::Mutex::new(state_struct);
+    // let state_mutex = std::sync::Mutex::new(state_struct);
     // std::sync::Mutex::new(state_struct);
 
     // println!("{:?}", &state_mutex);
 
-    let system_state = web::Data::new(state_mutex);
+    // let system_state = web::Data::new(state_mutex);
     // let system_state = web::Data::new(state_struct);
 
     // println!("{:?}", &system_state);
@@ -253,7 +283,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(state.clone())
-            .app_data(system_state.clone())
+            // .app_data(system_state.clone())
             .route("/echo/", web::get().to(echo))
     })
     .bind("127.0.0.1:8080")?
