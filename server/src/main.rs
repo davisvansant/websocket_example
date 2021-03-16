@@ -56,12 +56,10 @@ impl actix::Handler<SomeMessage> for State {
         // self.clients.push(msg);
         println!("State has received something!");
         println!("The message state received = {:?}", msg.something);
-        for c in &self.clients {
+        for c in self.clients.iter() {
             println!("am I connected? {:?}", c.connected());
-            c.do_send(SomeMessage {
-                something: String::from("welcome to websockets"),
-            })
-            .unwrap();
+            let msg = msg.clone();
+            c.do_send(msg).unwrap();
         }
     }
 }
@@ -78,7 +76,7 @@ impl actix::SystemService for State {
 #[rtype(result = "()")]
 struct RegisterClient(actix::Addr<WebsocketServer>);
 
-#[derive(Debug, actix::Message)]
+#[derive(Clone, Debug, actix::Message)]
 #[rtype(result = "()")]
 struct SomeMessage {
     something: String,
@@ -123,11 +121,13 @@ impl actix::Handler<SomeMessage> for WebsocketServer {
     fn handle(
         &mut self,
         msg: SomeMessage,
-        _: &mut actix_web_actors::ws::WebsocketContext<Self>,
+        context: &mut actix_web_actors::ws::WebsocketContext<Self>,
     ) -> Self::Result {
         println!("Whoami? {:?}", self);
         println!("Websocket Actor has received something");
         println!("Message = {:?}", msg.something);
+        // context.text(String::from("does this even work?"));
+        context.text(msg.something);
     }
 }
 
@@ -153,7 +153,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
                 // println!("{:?}", addr);
                 // let sender = addr.send(SomeMessage { something: text});
                 addr.do_send(SomeMessage { something: text });
-                ctx.text(String::from("something here"));
+                // ctx.text(String::from("something here"));
 
                 // match sender {
                 //     Ok(something) => println!("something might have happened {}", something),
