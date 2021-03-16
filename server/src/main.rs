@@ -8,12 +8,21 @@ struct State {
     clients: Vec<actix::Addr<WebsocketServer>>,
 }
 
+impl State {
+    pub async fn collector(&mut self, actor: actix::Addr<WebsocketServer>) {
+        self.clients.push(actor);
+        println!("addr pushed");
+        println!("{:?}", self.clients);
+    }
+}
+
 impl Actor for State {
     // type Context = ws::WebsocketContext<Self>;
     type Context = actix::Context<Self>;
 
     fn started(&mut self, ctx: &mut Self::Context) {
         println!("State initiatized");
+        println!("{:?}", ctx);
     }
 }
 
@@ -24,7 +33,7 @@ impl actix::Handler<SomeMessage> for State {
         &mut self,
         msg: SomeMessage,
         // _: &mut actix_web_actors::ws::WebsocketContext<Self>,
-        _: &mut actix::Context<Self>,
+        context: &mut actix::Context<Self>,
     ) -> Self::Result {
         println!("State has received something!");
         println!("The message state received = {:?}", msg.something);
@@ -137,9 +146,9 @@ async fn echo(
     request: HttpRequest,
     stream: web::Payload,
     data: web::Data<std::sync::Mutex<Vec<String>>>,
-    // state: web::Data<State>,
+    state: web::Data<std::sync::Mutex<State>>,
     // state: web::Data<std::sync::Mutex<State>>,
-    state: web::Data<actix::Addr<State>>,
+    // state: web::Data<actix::Addr<State>>,
 ) -> Result<HttpResponse, Error> {
     println!("{:?}", &request);
     // let host = &request.headers().get("host").unwrap().to_str().unwrap();
@@ -163,8 +172,9 @@ async fn echo(
             // let mut managed = data.lock().unwrap();
 
             // state.clients.push(actor);
-            // let mut clients = state.clients.lock().unwrap();
-            // clients.push(actor);
+            let mut clients = state.lock().unwrap();
+            clients.collector(actor).await;
+            // clients.clients.push(actor);
             // let mut clients = state.lock().unwrap();
             // clients.clients.push(actor);
             // clients.push(actor);
@@ -207,17 +217,18 @@ async fn main() -> std::io::Result<()> {
     let state = web::Data::new(app_state);
 
     let state_vec: Vec<actix::Addr<WebsocketServer>> = Vec::with_capacity(10);
-    let state_struct = State { clients: state_vec }.start();
+    // let state_struct = State { clients: state_vec }.start();
+    let state_struct = State { clients: state_vec };
 
     println!("{:?}", &state_struct);
 
-    // let state_mutex = std::sync::Mutex::new(state_struct);
+    let state_mutex = std::sync::Mutex::new(state_struct);
     // std::sync::Mutex::new(state_struct);
 
     // println!("{:?}", &state_mutex);
 
-    // let system_state = web::Data::new(state_mutex);
-    let system_state = web::Data::new(state_struct);
+    let system_state = web::Data::new(state_mutex);
+    // let system_state = web::Data::new(state_struct);
 
     // println!("{:?}", &system_state);
 
