@@ -33,12 +33,11 @@ impl actix::Handler<RegisterClient> for State {
 
     fn handle(
         &mut self,
-        RegisterClient(some_actor): RegisterClient,
-        // _: &mut actix_web_actors::ws::WebsocketContext<Self>,
+        RegisterClient(client): RegisterClient,
         context: &mut actix::Context<Self>,
     ) -> Self::Result {
         println!("Before message - {:?}", self.clients.len());
-        self.clients.push(some_actor.recipient());
+        self.clients.push(client.recipient());
         println!("After message = {:?}", self.clients.len());
     }
 }
