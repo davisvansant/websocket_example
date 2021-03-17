@@ -19,7 +19,6 @@ struct State {
 // }
 
 impl Actor for State {
-    // type Context = ws::WebsocketContext<Self>;
     type Context = actix::Context<Self>;
 
     fn started(&mut self, ctx: &mut Self::Context) {
