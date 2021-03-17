@@ -30,6 +30,20 @@ impl actix::Handler<RegisterClient> for State {
     }
 }
 
+impl actix::Handler<DelistClient> for State {
+    type Result = ();
+
+    fn handle(
+        &mut self,
+        DelistClient(client): DelistClient,
+        context: &mut actix::Context<Self>,
+    ) -> Self::Result {
+        println!("Before message - {:?}", self.clients.len());
+        self.clients.retain(|c| *c != client.clone().recipient());
+        println!("After message = {:?}", self.clients.len());
+    }
+}
+
 impl actix::Handler<SomeMessage> for State {
     type Result = ();
 
@@ -58,6 +72,10 @@ impl actix::SystemService for State {
 #[rtype(result = "()")]
 struct RegisterClient(actix::Addr<WebsocketServer>);
 
+#[derive(Debug, actix::Message)]
+#[rtype(result = "()")]
+struct DelistClient(actix::Addr<WebsocketServer>);
+
 #[derive(Clone, Debug, actix::Message)]
 #[rtype(result = "()")]
 struct SomeMessage {
@@ -81,6 +99,17 @@ impl Actor for WebsocketServer {
         let addr = State::from_registry();
 
         addr.do_send(RegisterClient(ctx.address()));
+    }
+
+    fn stopped(&mut self, ctx: &mut Self::Context) {
+        println!("Actor Stopped");
+        println!("{:?}", self);
+        use actix::AsyncContext;
+        use actix::SystemService;
+
+        let addr = State::from_registry();
+
+        addr.do_send(DelistClient(ctx.address()));
     }
 }
 
