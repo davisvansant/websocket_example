@@ -4,19 +4,8 @@ use actix_web_actors::ws;
 
 #[derive(Debug, Default, Clone)]
 struct State {
-    // clients: std::sync::Mutex<Vec<actix::Addr<WebsocketServer>>>,
-    // clients: Vec<actix::Addr<WebsocketServer>>,
     clients: Vec<actix::Recipient<SomeMessage>>,
 }
-
-// impl State {
-//     pub async fn collector(&mut self, actor: actix::Addr<WebsocketServer>) {
-//         // self.clients.push(actor);
-//         self.clients.push(actor.recipient());
-//         println!("addr pushed");
-//         println!("{:?}", self.clients);
-//     }
-// }
 
 impl Actor for State {
     type Context = actix::Context<Self>;
