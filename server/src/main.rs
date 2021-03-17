@@ -185,17 +185,8 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
     }
 }
 
-async fn echo(
-    request: HttpRequest,
-    stream: web::Payload,
-    // data: web::Data<std::sync::Mutex<Vec<String>>>,
-    // state: web::Data<std::sync::Mutex<State>>,
-    // state: web::Data<std::sync::Mutex<State>>,
-    // state: web::Data<actix::Addr<State>>,
-) -> Result<HttpResponse, Error> {
+async fn echo(request: HttpRequest, stream: web::Payload) -> Result<HttpResponse, Error> {
     println!("{:?}", &request);
-    // let host = &request.headers().get("host").unwrap().to_str().unwrap();
-    // let header_value = actix_web::http::HeaderValue::from_str(host).unwrap();
     let client = &request
         .headers()
         .get("sec-websocket-key")
@@ -212,42 +203,11 @@ async fn echo(
         Ok(result) => {
             let actor = result.0;
             let message = result.1;
-            // let mut managed = data.lock().unwrap();
-
-            // state.clients.push(actor);
-            // let mut clients = state.lock().unwrap();
-            // clients.collector(actor).await;
-            // drop(clients);
-            // drop(state);
-            // clients.clients.push(actor);
-            // let mut clients = state.lock().unwrap();
-            // clients.clients.push(actor);
-            // clients.push(actor);
-
-            // managed.push(String::from("hi"));
 
             let arbiter = actix::Arbiter::current();
             println!("{:?}", arbiter);
-            // println!("{:?}", actix::Arbiter::contains_item());
             let system = actix::System::current();
             println!("{:?}", system);
-
-            // println!("{:?}", actor);
-
-            // let something_to_send = SomeMessage {
-            //     something: String::from("welcome to websockets"),
-            // };
-
-            // actor.do_send(something_to_send);
-
-            // let recipient = actor.recipient();
-            // match recipient.do_send(something_to_send) {
-            //     Ok(_) => println!("Something has been sent"),
-            //     Err(dunno) => println!("{:?}", dunno),
-            // }
-
-            // println!("{:?}", &managed);
-            // println!("connected ? - {:?}", actor.connected());
             println!("{}", message.status().as_str());
             Ok(message)
         }
