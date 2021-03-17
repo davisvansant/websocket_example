@@ -46,16 +46,11 @@ impl actix::Handler<RegisterClient> for State {
 impl actix::Handler<SomeMessage> for State {
     type Result = ();
 
-    fn handle(
-        &mut self,
-        msg: SomeMessage,
-        // _: &mut actix_web_actors::ws::WebsocketContext<Self>,
-        context: &mut actix::Context<Self>,
-    ) -> Self::Result {
+    fn handle(&mut self, msg: SomeMessage, context: &mut actix::Context<Self>) -> Self::Result {
         println!("do I have clients?{:?}", self.clients.len());
-        // self.clients.push(msg);
         println!("State has received something!");
         println!("The message state received = {:?}", msg.something);
+
         for c in self.clients.iter() {
             println!("am I connected? {:?}", c.connected());
             let msg = msg.clone();
