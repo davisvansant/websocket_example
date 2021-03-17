@@ -126,7 +126,7 @@ impl actix::Handler<SomeMessage> for WebsocketServer {
         println!("Whoami? {:?}", self);
         println!("Websocket Actor has received something");
         println!("Message = {:?}", msg.something);
-        // context.text(String::from("does this even work?"));
+
         context.text(msg.something);
     }
 }
