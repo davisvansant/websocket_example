@@ -97,21 +97,8 @@ impl Actor for WebsocketServer {
         use actix::SystemService;
 
         let addr = State::from_registry();
-        // println!("{:?}", addr);
-        // let sender = addr.send(SomeMessage { something: text});
+
         addr.do_send(RegisterClient(ctx.address()));
-        // println!("{:?}", ctx.set_mailbox_capacity(100));
-        // let channel = actix::dev::channel::channel::<State>(10);
-        // println!("{:?}", channel.0);
-        // println!("{:?}", channel.1);
-        // let send = channel.0.send(SomeMessage {
-        //     something: String::from("welcome to websockets"),
-        // });
-        //
-        // match send {
-        //     Ok(result) => println!("ok on start {:?}", result),
-        //     Err(error) => println!("something didnt happen = {:?}", error),
-        // }
     }
 }
 
