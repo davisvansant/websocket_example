@@ -9,14 +9,14 @@ struct State {
     clients: Vec<actix::Recipient<SomeMessage>>,
 }
 
-impl State {
-    pub async fn collector(&mut self, actor: actix::Addr<WebsocketServer>) {
-        // self.clients.push(actor);
-        self.clients.push(actor.recipient());
-        println!("addr pushed");
-        println!("{:?}", self.clients);
-    }
-}
+// impl State {
+//     pub async fn collector(&mut self, actor: actix::Addr<WebsocketServer>) {
+//         // self.clients.push(actor);
+//         self.clients.push(actor.recipient());
+//         println!("addr pushed");
+//         println!("{:?}", self.clients);
+//     }
+// }
 
 impl Actor for State {
     // type Context = ws::WebsocketContext<Self>;
@@ -101,17 +101,17 @@ impl Actor for WebsocketServer {
         // let sender = addr.send(SomeMessage { something: text});
         addr.do_send(RegisterClient(ctx.address()));
         // println!("{:?}", ctx.set_mailbox_capacity(100));
-        let channel = actix::dev::channel::channel::<State>(10);
-        println!("{:?}", channel.0);
+        // let channel = actix::dev::channel::channel::<State>(10);
+        // println!("{:?}", channel.0);
         // println!("{:?}", channel.1);
-        let send = channel.0.send(SomeMessage {
-            something: String::from("welcome to websockets"),
-        });
-
-        match send {
-            Ok(result) => println!("ok on start {:?}", result),
-            Err(error) => println!("something didnt happen = {:?}", error),
-        }
+        // let send = channel.0.send(SomeMessage {
+        //     something: String::from("welcome to websockets"),
+        // });
+        //
+        // match send {
+        //     Ok(result) => println!("ok on start {:?}", result),
+        //     Err(error) => println!("something didnt happen = {:?}", error),
+        // }
     }
 }
 
@@ -188,7 +188,7 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
 async fn echo(
     request: HttpRequest,
     stream: web::Payload,
-    data: web::Data<std::sync::Mutex<Vec<String>>>,
+    // data: web::Data<std::sync::Mutex<Vec<String>>>,
     // state: web::Data<std::sync::Mutex<State>>,
     // state: web::Data<std::sync::Mutex<State>>,
     // state: web::Data<actix::Addr<State>>,
@@ -257,9 +257,9 @@ async fn echo(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    let vec: Vec<String> = Vec::new();
-    let app_state = std::sync::Mutex::new(vec);
-    let state = web::Data::new(app_state);
+    // let vec: Vec<String> = Vec::new();
+    // let app_state = std::sync::Mutex::new(vec);
+    // let state = web::Data::new(app_state);
 
     // let state_vec: Vec<actix::Addr<WebsocketServer>> = Vec::with_capacity(10);
     // let state_vec: Vec<actix::Recipient<SomeMessage>> = Vec::with_capacity(10);
@@ -282,7 +282,7 @@ async fn main() -> std::io::Result<()> {
 
     HttpServer::new(move || {
         App::new()
-            .app_data(state.clone())
+            // .app_data(state.clone())
             // .app_data(system_state.clone())
             .route("/echo/", web::get().to(echo))
     })
