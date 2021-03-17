@@ -148,25 +148,9 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
                 println!("test - {:?}", &text);
 
                 use actix::SystemService;
-
                 let addr = State::from_registry();
-                // println!("{:?}", addr);
-                // let sender = addr.send(SomeMessage { something: text});
-                addr.do_send(SomeMessage { something: text });
-                // ctx.text(String::from("something here"));
 
-                // match sender {
-                //     Ok(something) => println!("something might have happened {}", something),
-                //     Err(error) => println!("I dont think it happened {:?}", error),
-                // }
-                // ctx.text(text);
-                // let channel = actix::dev::channel::channel::<State>(10);
-                // let send = channel.0.send(SomeMessage { something: text });
-                //
-                // match send {
-                //     Ok(result) => println!("sent {:?}", result),
-                //     Err(error) => println!("something didnt happen = {:?}", error),
-                // }
+                addr.do_send(SomeMessage { something: text });
             }
             Ok(ws::Message::Binary(bin)) => ctx.binary(bin),
             Ok(ws::Message::Close(close)) => {
