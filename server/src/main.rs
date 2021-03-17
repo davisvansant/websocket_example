@@ -257,36 +257,8 @@ async fn echo(
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
-    // let vec: Vec<String> = Vec::new();
-    // let app_state = std::sync::Mutex::new(vec);
-    // let state = web::Data::new(app_state);
-
-    // let state_vec: Vec<actix::Addr<WebsocketServer>> = Vec::with_capacity(10);
-    // let state_vec: Vec<actix::Recipient<SomeMessage>> = Vec::with_capacity(10);
-    // let state_struct = State { clients: state_vec }.start();
-    // let state_struct = State { clients: state_vec };
-
-    // println!("{:?}", &state_struct);
-
-    // let state_mutex = std::sync::Mutex::new(state_struct);
-    // std::sync::Mutex::new(state_struct);
-
-    // println!("{:?}", &state_mutex);
-
-    // let system_state = web::Data::new(state_mutex);
-    // let system_state = web::Data::new(state_struct);
-
-    // println!("{:?}", &system_state);
-
-    // let system_state = web::Data::new(State { clients: std::sync::Mutex::new(Vec::with_capacity(10)) }).start();
-
-    HttpServer::new(move || {
-        App::new()
-            // .app_data(state.clone())
-            // .app_data(system_state.clone())
-            .route("/echo/", web::get().to(echo))
-    })
-    .bind("127.0.0.1:8080")?
-    .run()
-    .await
+    HttpServer::new(|| App::new().route("/echo/", web::get().to(echo)))
+        .bind("127.0.0.1:8080")?
+        .run()
+        .await
 }
