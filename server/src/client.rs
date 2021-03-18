@@ -1,0 +1,92 @@
+use actix::{Actor, StreamHandler};
+use actix_web_actors::ws;
+
+use crate::DelistClient;
+use crate::RegisterClient;
+use crate::SomeMessage;
+use crate::State;
+
+#[derive(Debug)]
+pub struct WebsocketServer {
+    pub host: actix_web::http::HeaderValue,
+}
+
+impl Actor for WebsocketServer {
+    type Context = ws::WebsocketContext<Self>;
+
+    fn started(&mut self, ctx: &mut Self::Context) {
+        println!("Actor Started");
+        println!("{:?}", self);
+        use actix::AsyncContext;
+        use actix::SystemService;
+
+        let addr = State::from_registry();
+
+        addr.do_send(RegisterClient(ctx.address()));
+    }
+
+    fn stopped(&mut self, ctx: &mut Self::Context) {
+        println!("Actor Stopped");
+        println!("{:?}", self);
+        use actix::AsyncContext;
+        use actix::SystemService;
+
+        let addr = State::from_registry();
+
+        addr.do_send(DelistClient(ctx.address()));
+    }
+}
+
+impl actix::Handler<SomeMessage> for WebsocketServer {
+    type Result = ();
+
+    fn handle(
+        &mut self,
+        msg: SomeMessage,
+        context: &mut actix_web_actors::ws::WebsocketContext<Self>,
+    ) -> Self::Result {
+        println!("Whoami? {:?}", self);
+        println!("Websocket Actor has received something");
+        println!("Message = {:?}", msg.something);
+
+        context.text(msg.something);
+    }
+}
+
+impl actix::Message for WebsocketServer {
+    type Result = ();
+}
+
+impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
+    fn handle(&mut self, msg: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
+        match msg {
+            Ok(ws::Message::Ping(msg)) => {
+                println!("ping received!");
+                ctx.pong(&msg);
+            }
+            Ok(ws::Message::Text(text)) => {
+                println!("text recieved!");
+                println!("client - {:?}", self.host);
+                println!("test - {:?}", &text);
+
+                use actix::SystemService;
+                let addr = State::from_registry();
+
+                addr.do_send(SomeMessage { something: text });
+            }
+            Ok(ws::Message::Binary(bin)) => ctx.binary(bin),
+            Ok(ws::Message::Close(close)) => {
+                println!("closing...",);
+                if let Some(close_reason) = &close {
+                    println!("Client - {:?}", self.host);
+                    println!("Closing with the following code : {:?}", close_reason.code);
+                    if let Some(description) = &close_reason.description {
+                        println!("Closing with the following description : {}", description);
+                    }
+                }
+                ctx.close(close);
+            }
+            _ => (),
+        }
+    }
+}
