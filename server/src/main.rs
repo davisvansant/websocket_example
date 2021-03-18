@@ -2,6 +2,12 @@ use actix::{Actor, StreamHandler};
 use actix_web::{web, App, Error, HttpRequest, HttpResponse, HttpServer};
 use actix_web_actors::ws;
 
+mod messages;
+
+use crate::messages::DelistClient;
+use crate::messages::RegisterClient;
+use crate::messages::SomeMessage;
+
 #[derive(Debug, Default, Clone)]
 struct State {
     clients: Vec<actix::Recipient<SomeMessage>>,
@@ -68,22 +74,22 @@ impl actix::SystemService for State {
     }
 }
 
-#[derive(Debug, actix::Message)]
-#[rtype(result = "()")]
-struct RegisterClient(actix::Addr<WebsocketServer>);
-
-#[derive(Debug, actix::Message)]
-#[rtype(result = "()")]
-struct DelistClient(actix::Addr<WebsocketServer>);
-
-#[derive(Clone, Debug, actix::Message)]
-#[rtype(result = "()")]
-struct SomeMessage {
-    something: String,
-}
+// #[derive(Debug, actix::Message)]
+// #[rtype(result = "()")]
+// struct RegisterClient(actix::Addr<WebsocketServer>);
+//
+// #[derive(Debug, actix::Message)]
+// #[rtype(result = "()")]
+// struct DelistClient(actix::Addr<WebsocketServer>);
+//
+// #[derive(Clone, Debug, actix::Message)]
+// #[rtype(result = "()")]
+// struct SomeMessage {
+//     something: String,
+// }
 
 #[derive(Debug)]
-struct WebsocketServer {
+pub struct WebsocketServer {
     host: actix_web::http::HeaderValue,
 }
 
