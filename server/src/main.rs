@@ -176,25 +176,8 @@ async fn echo(request: HttpRequest, stream: web::Payload) -> Result<HttpResponse
         .to_str()
         .unwrap();
     let header_value = actix_web::http::HeaderValue::from_str(client).unwrap();
-    // let response = ws::start(WebsocketServer { host: header_value }, &request, stream);
-    // println!("{:?}", response);
-    // response
-    let sender = ws::start_with_addr(WebsocketServer { host: header_value }, &request, stream);
 
-    match sender {
-        Ok(result) => {
-            let actor = result.0;
-            let message = result.1;
-
-            let arbiter = actix::Arbiter::current();
-            println!("{:?}", arbiter);
-            let system = actix::System::current();
-            println!("{:?}", system);
-            println!("{}", message.status().as_str());
-            Ok(message)
-        }
-        Err(error) => Err(error),
-    }
+    ws::start(WebsocketServer { host: header_value }, &request, stream)
 }
 
 #[actix_web::main]
