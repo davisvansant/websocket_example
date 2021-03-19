@@ -24,7 +24,7 @@ impl actix::Handler<RegisterClient> for State {
     fn handle(
         &mut self,
         RegisterClient(client): RegisterClient,
-        context: &mut actix::Context<Self>,
+        _context: &mut actix::Context<Self>,
     ) -> Self::Result {
         println!("Before message - {:?}", self.clients.len());
         self.clients.push(client.recipient());
@@ -38,7 +38,7 @@ impl actix::Handler<DelistClient> for State {
     fn handle(
         &mut self,
         DelistClient(client): DelistClient,
-        context: &mut actix::Context<Self>,
+        _context: &mut actix::Context<Self>,
     ) -> Self::Result {
         println!("Before message - {:?}", self.clients.len());
         self.clients.retain(|c| *c != client.clone().recipient());
@@ -49,7 +49,7 @@ impl actix::Handler<DelistClient> for State {
 impl actix::Handler<SomeMessage> for State {
     type Result = ();
 
-    fn handle(&mut self, msg: SomeMessage, context: &mut actix::Context<Self>) -> Self::Result {
+    fn handle(&mut self, msg: SomeMessage, _context: &mut actix::Context<Self>) -> Self::Result {
         println!("do I have clients?{:?}", self.clients.len());
         println!("State has received something!");
         println!("The message state received = {:?}", msg.something);
@@ -65,7 +65,7 @@ impl actix::Handler<SomeMessage> for State {
 impl actix::Supervised for State {}
 
 impl actix::SystemService for State {
-    fn service_started(&mut self, ctx: &mut actix::Context<Self>) {
+    fn service_started(&mut self, _ctx: &mut actix::Context<Self>) {
         println!("Service started");
     }
 }
