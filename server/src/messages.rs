@@ -13,6 +13,9 @@ pub struct DelistClient(pub actix::Addr<Client>);
 
 #[derive(Clone, Debug, actix::Message)]
 #[rtype(result = "()")]
-pub struct SomeMessage {
-    pub something: String,
+// pub struct SomeMessage {
+//     pub something: String,
+// }
+pub struct Transmission {
+    pub data: String,
 }

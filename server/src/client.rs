@@ -3,7 +3,8 @@ use actix_web_actors::ws;
 
 use crate::DelistClient;
 use crate::RegisterClient;
-use crate::SomeMessage;
+// use crate::SomeMessage;
+use crate::Transmission;
 // use crate::State;
 use crate::Server;
 
@@ -40,19 +41,23 @@ impl Actor for Client {
     }
 }
 
-impl actix::Handler<SomeMessage> for Client {
+// impl actix::Handler<SomeMessage> for Client {
+impl actix::Handler<Transmission> for Client {
     type Result = ();
 
     fn handle(
         &mut self,
-        msg: SomeMessage,
+        // msg: SomeMessage,
+        transmission: Transmission,
         context: &mut actix_web_actors::ws::WebsocketContext<Self>,
     ) -> Self::Result {
         println!("Whoami? {:?}", self);
         println!("Websocket Actor has received something");
-        println!("Message = {:?}", msg.something);
+        // println!("Message = {:?}", msg.something);
+        println!("Message = {:?}", transmission.data);
 
-        context.text(msg.something);
+        // context.text(msg.something);
+        context.text(transmission.data);
     }
 }
 
@@ -76,7 +81,8 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for Client {
                 // let addr = State::from_registry();
                 let addr = Server::from_registry();
 
-                addr.do_send(SomeMessage { something: text });
+                // addr.do_send(SomeMessage { something: text });
+                addr.do_send(Transmission { data: text });
             }
             Ok(ws::Message::Binary(bin)) => ctx.binary(bin),
             Ok(ws::Message::Close(close)) => {

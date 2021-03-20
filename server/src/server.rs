@@ -2,11 +2,13 @@ use actix::Actor;
 
 use crate::DelistClient;
 use crate::RegisterClient;
-use crate::SomeMessage;
+// use crate::SomeMessage;
+use crate::Transmission;
 
 #[derive(Debug, Default, Clone)]
 pub struct Server {
-    clients: Vec<actix::Recipient<SomeMessage>>,
+    // clients: Vec<actix::Recipient<SomeMessage>>,
+    clients: Vec<actix::Recipient<Transmission>>,
 }
 
 impl Actor for Server {
@@ -46,18 +48,27 @@ impl actix::Handler<DelistClient> for Server {
     }
 }
 
-impl actix::Handler<SomeMessage> for Server {
+// impl actix::Handler<SomeMessage> for Server {
+impl actix::Handler<Transmission> for Server {
     type Result = ();
 
-    fn handle(&mut self, msg: SomeMessage, _context: &mut actix::Context<Self>) -> Self::Result {
+    // fn handle(&mut self, msg: SomeMessage, _context: &mut actix::Context<Self>) -> Self::Result {
+    fn handle(
+        &mut self,
+        transmission: Transmission,
+        _context: &mut actix::Context<Self>,
+    ) -> Self::Result {
         println!("do I have clients?{:?}", self.clients.len());
         println!("State has received something!");
-        println!("The message state received = {:?}", msg.something);
+        // println!("The message state received = {:?}", msg.something);
+        println!("The message state received = {:?}", transmission.data);
 
         for c in self.clients.iter() {
             println!("am I connected? {:?}", c.connected());
-            let msg = msg.clone();
-            c.do_send(msg).unwrap();
+            // let msg = msg.clone();
+            // c.do_send(msg).unwrap();
+            let transmission = transmission.clone();
+            c.do_send(transmission).unwrap();
         }
     }
 }
