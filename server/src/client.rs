@@ -8,11 +8,11 @@ use crate::SomeMessage;
 use crate::Server;
 
 #[derive(Debug)]
-pub struct WebsocketServer {
+pub struct Client {
     pub host: actix_web::http::HeaderValue,
 }
 
-impl Actor for WebsocketServer {
+impl Actor for Client {
     type Context = ws::WebsocketContext<Self>;
 
     fn started(&mut self, ctx: &mut Self::Context) {
@@ -40,7 +40,7 @@ impl Actor for WebsocketServer {
     }
 }
 
-impl actix::Handler<SomeMessage> for WebsocketServer {
+impl actix::Handler<SomeMessage> for Client {
     type Result = ();
 
     fn handle(
@@ -56,11 +56,11 @@ impl actix::Handler<SomeMessage> for WebsocketServer {
     }
 }
 
-impl actix::Message for WebsocketServer {
+impl actix::Message for Client {
     type Result = ();
 }
 
-impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
+impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for Client {
     fn handle(&mut self, msg: Result<ws::Message, ws::ProtocolError>, ctx: &mut Self::Context) {
         match msg {
             Ok(ws::Message::Ping(msg)) => {

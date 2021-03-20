@@ -7,7 +7,8 @@ mod server;
 
 use crate::handlers::echo;
 
-use crate::client::WebsocketServer;
+// use crate::client::WebsocketServer;
+use crate::client::Client;
 
 use crate::messages::DelistClient;
 use crate::messages::RegisterClient;
