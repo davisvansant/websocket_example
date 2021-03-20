@@ -13,7 +13,8 @@ use crate::messages::DelistClient;
 use crate::messages::RegisterClient;
 use crate::messages::SomeMessage;
 
-use crate::server::State;
+// use crate::server::State;
+use crate::server::Server;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {

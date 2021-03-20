@@ -4,7 +4,8 @@ use actix_web_actors::ws;
 use crate::DelistClient;
 use crate::RegisterClient;
 use crate::SomeMessage;
-use crate::State;
+// use crate::State;
+use crate::Server;
 
 #[derive(Debug)]
 pub struct WebsocketServer {
@@ -20,7 +21,8 @@ impl Actor for WebsocketServer {
         use actix::AsyncContext;
         use actix::SystemService;
 
-        let addr = State::from_registry();
+        // let addr = State::from_registry();
+        let addr = Server::from_registry();
 
         addr.do_send(RegisterClient(ctx.address()));
     }
@@ -31,7 +33,8 @@ impl Actor for WebsocketServer {
         use actix::AsyncContext;
         use actix::SystemService;
 
-        let addr = State::from_registry();
+        // let addr = State::from_registry();
+        let addr = Server::from_registry();
 
         addr.do_send(DelistClient(ctx.address()));
     }
@@ -70,7 +73,8 @@ impl StreamHandler<Result<ws::Message, ws::ProtocolError>> for WebsocketServer {
                 println!("test - {:?}", &text);
 
                 use actix::SystemService;
-                let addr = State::from_registry();
+                // let addr = State::from_registry();
+                let addr = Server::from_registry();
 
                 addr.do_send(SomeMessage { something: text });
             }

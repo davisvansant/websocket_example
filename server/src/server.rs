@@ -5,11 +5,11 @@ use crate::RegisterClient;
 use crate::SomeMessage;
 
 #[derive(Debug, Default, Clone)]
-pub struct State {
+pub struct Server {
     clients: Vec<actix::Recipient<SomeMessage>>,
 }
 
-impl Actor for State {
+impl Actor for Server {
     type Context = actix::Context<Self>;
 
     fn started(&mut self, ctx: &mut Self::Context) {
@@ -18,7 +18,7 @@ impl Actor for State {
     }
 }
 
-impl actix::Handler<RegisterClient> for State {
+impl actix::Handler<RegisterClient> for Server {
     type Result = ();
 
     fn handle(
@@ -32,7 +32,7 @@ impl actix::Handler<RegisterClient> for State {
     }
 }
 
-impl actix::Handler<DelistClient> for State {
+impl actix::Handler<DelistClient> for Server {
     type Result = ();
 
     fn handle(
@@ -46,7 +46,7 @@ impl actix::Handler<DelistClient> for State {
     }
 }
 
-impl actix::Handler<SomeMessage> for State {
+impl actix::Handler<SomeMessage> for Server {
     type Result = ();
 
     fn handle(&mut self, msg: SomeMessage, _context: &mut actix::Context<Self>) -> Self::Result {
@@ -62,9 +62,9 @@ impl actix::Handler<SomeMessage> for State {
     }
 }
 
-impl actix::Supervised for State {}
+impl actix::Supervised for Server {}
 
-impl actix::SystemService for State {
+impl actix::SystemService for Server {
     fn service_started(&mut self, _ctx: &mut actix::Context<Self>) {
         println!("Service started");
     }
