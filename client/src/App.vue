@@ -25,12 +25,12 @@ function sendMessage (connection: WebSocket) {
 }
 
 function closeConnection (connection: WebSocket) {
-  const reason = '1000'
+  const reason = 1000
   const message = 'goodbye!'
   connection.close(reason, message)
 }
 
-console.log(websocket.readyState)
+console.log('Websocket status -', websocket.readyState)
 
 websocket.addEventListener('open', (event) => {
   console.log(event)
@@ -42,4 +42,8 @@ websocket.addEventListener('message', function (event) {
   console.log('Message from server ', event.data)
   closeConnection(websocket)
 })
+
+export default {
+  name: 'app'
+}
 </script>
