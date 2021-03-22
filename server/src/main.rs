@@ -15,7 +15,7 @@ use crate::server::Server;
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     HttpServer::new(|| App::new().route("/echo/", web::get().to(echo)))
-        .bind("127.0.0.1:8080")?
+        .bind("127.0.0.1:8888")?
         .run()
         .await
 }
