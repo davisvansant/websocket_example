@@ -1,6 +1,6 @@
 <template>
   <img alt="Rusty!" src="./assets/error.png">
-  <div id="console" style="
+  <div id="app" style="
       background-color:black;
       width: 800px;
       height: 300px;
@@ -11,10 +11,13 @@
       color: white;"
       >
       <p style="color:DarkOrange">|||||| websocket client</p>
+      <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="connecter()">join</button>
+      <p>{{ readystate }}</p>
     </div>
 </template>
 
 <script lang="ts">
+import { defineComponent } from 'vue'
 const websocketUrl = 'ws://localhost:8888/echo/'
 const websocket = new WebSocket(websocketUrl)
 
@@ -54,9 +57,19 @@ websocket.addEventListener('message', function (event) {
   closeConnection(websocket)
 })
 
-export default {
-  name: 'app'
-}
+export default defineComponent({
+  name: 'app',
+  data () {
+    return { readystate: 0 | 1 | 2 | 3 }
+  },
+  methods: {
+    connecter () {
+      const websocketUrl = 'ws://localhost:8888/echo/'
+      const websocket = new WebSocket(websocketUrl)
+      this.readystate = websocket.readyState
+    }
+  }
+})
 </script>
 
 <style>
