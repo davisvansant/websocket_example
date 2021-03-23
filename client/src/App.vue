@@ -1,6 +1,17 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <h1>Welcome to Your Vue.js + TypeScript App</h1>
+  <img alt="Rusty!" src="./assets/error.png">
+  <div id="console" style="
+      background-color:black;
+      width: 800px;
+      height: 300px;
+      padding: 25px;
+      margin: 25px;
+      box-shadow:3px 3px 10px 0 rgba(0, 0, 0, 0.75);
+      font-family:Courier New;
+      color: white;"
+      >
+      <p style="color:DarkOrange">|||||| websocket client</p>
+    </div>
 </template>
 
 <script lang="ts">
@@ -47,3 +58,9 @@ export default {
   name: 'app'
 }
 </script>
+
+<style>
+  body {
+    background: PapayaWhip;
+  }
+</style>
