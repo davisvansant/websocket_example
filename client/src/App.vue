@@ -10,7 +10,7 @@
       font-family:Courier New;
       color: white;"
       >
-      <p style="color:DarkOrange">|||||| websocket client | status . {{ status }} | url . {{ url }}</p>
+      <p style="color:DarkOrange">|||||| websocket client | status ~ {{ status }} | url ~ {{ url }} |<button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="close()">close</button>|</p>
       <!-- <p style="color:DarkOrange">|||| connection status  {{ status }}</p>
       <p style="color:DarkOrange">||| connection url  {{ url }}</p> -->
       <!-- <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="join()">join</button>
@@ -85,6 +85,9 @@ export default defineComponent({
       const websocketUrl = 'ws://localhost:8888/echo/'
       const websocket:WebSocket = new WebSocket(websocketUrl)
       this.connection = websocket
+    },
+    close () {
+      this.connection.close(1000, 'goodbye!')
     },
     statuscheck () {
       console.log(this.connection.readyState)
