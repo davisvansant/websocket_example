@@ -15,6 +15,8 @@
       <p style="color:DarkOrange">||| connection url  {{ url }}</p> -->
       <!-- <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="join()">join</button>
       <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="statuscheck()">status</button> -->
+      <input v-model="message" placeholder=">"/>
+      <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="send()">send</button>
     </div>
 </template>
 
@@ -62,7 +64,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'app',
   data () {
-    return { connection: WebSocket.prototype, status: '', url: '' }
+    return { connection: WebSocket.prototype, status: '', url: '', message: '' }
   },
   created () {
     const websocketUrl = 'ws://localhost:8888/echo/'
@@ -85,6 +87,9 @@ export default defineComponent({
       const websocketUrl = 'ws://localhost:8888/echo/'
       const websocket:WebSocket = new WebSocket(websocketUrl)
       this.connection = websocket
+    },
+    send () {
+      this.connection.send(this.message)
     },
     close () {
       this.connection.close(1000, 'goodbye!')
