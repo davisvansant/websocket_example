@@ -10,9 +10,11 @@
       font-family:Courier New;
       color: white;"
       >
-      <p style="color:DarkOrange">|||||| websocket client || status [ {{ statuscheck() }} ]</p>
-      <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="join()">join</button>
-      <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="statuscheck()">status</button>
+      <p style="color:DarkOrange">|||||| websocket client | status . {{ status }} | url . {{ url }}</p>
+      <!-- <p style="color:DarkOrange">|||| connection status  {{ status }}</p>
+      <p style="color:DarkOrange">||| connection url  {{ url }}</p> -->
+      <!-- <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="join()">join</button>
+      <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="statuscheck()">status</button> -->
     </div>
 </template>
 
@@ -60,7 +62,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'app',
   data () {
-    return { connection: WebSocket.prototype, status: 0 | 1 | 2 | 3 }
+    return { connection: WebSocket.prototype, status: 0 | 1 | 2 | 3, url: '' }
   },
   created () {
     const websocketUrl = 'ws://localhost:8888/echo/'
@@ -68,6 +70,15 @@ export default defineComponent({
     console.log('this is happening')
     this.connection = websocket
     this.status = websocket.readyState
+    this.url = websocket.url
+    websocket.addEventListener('open', (event) => {
+      console.log('on open event', event)
+      this.statuscheck()
+    })
+    websocket.addEventListener('close', (event) => {
+      console.log('The connection has been closed successfully.', event)
+      this.statuscheck()
+    })
   },
   methods: {
     join () {
@@ -76,9 +87,8 @@ export default defineComponent({
       this.connection = websocket
     },
     statuscheck () {
-      const somestatus: WebSocket = this.connection
-      console.log(somestatus.readyState)
-      this.status = somestatus.readyState
+      console.log(this.connection.readyState)
+      this.status = this.connection.readyState
       return this.status
     }
   }
