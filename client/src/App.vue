@@ -10,7 +10,7 @@
       font-family:Courier New;
       color: white;"
       >
-      <p style="color:DarkOrange">|||||| websocket client | status ~ {{ status }} | url ~ {{ url }} |<button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="close()">close</button>|</p>
+      <p style="color:DarkOrange">|||||| websocket client |  {{ url }} | {{ status }} |<button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="close()">close</button>|</p>
       <!-- <p style="color:DarkOrange">|||| connection status  {{ status }}</p>
       <p style="color:DarkOrange">||| connection url  {{ url }}</p> -->
       <!-- <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="join()">join</button>
@@ -62,14 +62,14 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'app',
   data () {
-    return { connection: WebSocket.prototype, status: 0 | 1 | 2 | 3, url: '' }
+    return { connection: WebSocket.prototype, status: '', url: '' }
   },
   created () {
     const websocketUrl = 'ws://localhost:8888/echo/'
     const websocket:WebSocket = new WebSocket(websocketUrl)
     console.log('this is happening')
     this.connection = websocket
-    this.status = websocket.readyState
+    this.status = this.statuscheck() || ''
     this.url = websocket.url
     websocket.addEventListener('open', (event) => {
       console.log('on open event', event)
@@ -91,8 +91,20 @@ export default defineComponent({
     },
     statuscheck () {
       console.log(this.connection.readyState)
-      this.status = this.connection.readyState
-      return this.status
+      switch (this.connection.readyState) {
+        case 0:
+          this.status = 'CONNECTING'
+          return this.status
+        case 1:
+          this.status = 'OPEN'
+          return this.status
+        case 2:
+          this.status = 'CLOSING'
+          return this.status
+        case 3:
+          this.status = 'CLOSED'
+          return this.status
+      }
     }
   }
 })
