@@ -10,7 +10,7 @@
       font-family:Courier New;
       color: white;"
       >
-      <p style="color:DarkOrange">|||||| websocket client | {{ url }} |<button style="background-color:DimGrey;border:1px solid DimGrey;padding: 5px 75px;outline:none;margin: 5px 5px;font-family:Courier New;color:Black;" v-on:click="close()">CLOSE CONNECTION</button>|</p>
+      <p style="color:DarkOrange">|||||| websocket client | {{ url }} |<button style="background-color:Black;border:1px solid DarkOrange;padding: 5px 75px;outline:none;margin: 5px 5px;font-family:Courier New;color:PapayaWhip;" v-on:click="close()">CLOSE CONNECTION</button>|</p>
       <p style="color:DarkOrange">||||| connection status |<span style="background-color:DarkOrange;padding: 2px 109px;outline:none;margin: 2px 2px;font-family:Courier New;color:Black;">{{ status }}</span>|</p>
       <hr style="height:1px;background-color:DimGrey">
       <!-- <p style="color:DarkOrange">|||| connection status  {{ status }}</p>
