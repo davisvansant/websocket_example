@@ -3,20 +3,22 @@
   <div id="app" style="
       background-color:black;
       width: 800px;
-      height: 300px;
+      height: 400px;
       padding: 25px;
       margin: 25px;
       box-shadow:3px 3px 10px 0 rgba(0, 0, 0, 0.75);
       font-family:Courier New;
       color: white;"
       >
-      <p style="color:DarkOrange">|||||| websocket client |  {{ url }} | {{ status }} |<button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="close()">close</button>|</p>
+      <p style="color:DarkOrange">|||||| websocket client | {{ url }} |<button style="background-color:DimGrey;border:1px solid DimGrey;padding: 5px 75px;outline:none;margin: 5px 5px;font-family:Courier New;color:Black;" v-on:click="close()">CLOSE CONNECTION</button>|</p>
+      <p style="color:DarkOrange">||||| connection status |<span style="background-color:DarkOrange;padding: 2px 109px;outline:none;margin: 2px 2px;font-family:Courier New;color:Black;">{{ status }}</span>|</p>
+      <hr style="height:1px;background-color:DimGrey">
       <!-- <p style="color:DarkOrange">|||| connection status  {{ status }}</p>
       <p style="color:DarkOrange">||| connection url  {{ url }}</p> -->
       <!-- <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="join()">join</button>
       <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="statuscheck()">status</button> -->
-      <input v-model="message" placeholder=">"/>
-      <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="send()">send</button>
+      <input v-model="message" id="send_message" placeholder=">" autofocus=true size="110"/>
+      <button onclick="document.getElementById('send_message').value = ''" style="position: bottom;background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="send()">send</button>
     </div>
 </template>
 
