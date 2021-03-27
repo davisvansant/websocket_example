@@ -79,6 +79,12 @@ export default defineComponent({
       console.log('on open event', event)
       this.statuscheck()
     })
+
+    websocket.addEventListener('message', function (event) {
+      console.log(event)
+      console.log('Message from server ', event.data)
+    })
+
     websocket.addEventListener('close', (event) => {
       console.log('The connection has been closed successfully.', event)
       this.statuscheck()
