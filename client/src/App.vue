@@ -24,44 +24,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
-// const websocketUrl = 'ws://localhost:8888/echo/'
-// const websocket = new WebSocket(websocketUrl)
-//
-// websocket.onmessage = function (onmessage) {
-//   console.log(onmessage.data)
-// }
-//
-// websocket.onclose = function (onclose) {
-//   console.log(onclose)
-// }
-//
-// websocket.onerror = function (onerror) {
-//   console.log(onerror)
-// }
-//
-// function sendMessage (connection: WebSocket) {
-//   const message = 'hello!'
-//   connection.send(message)
-// }
-//
-// function closeConnection (connection: WebSocket) {
-//   const reason = 1000
-//   const message = 'goodbye!'
-//   connection.close(reason, message)
-// }
-//
-// console.log('Websocket status -', websocket.readyState)
-//
-// websocket.addEventListener('open', (event) => {
-//   console.log(event)
-//   sendMessage(websocket)
-// })
-//
-// websocket.addEventListener('message', function (event) {
-//   console.log(event)
-//   console.log('Message from server ', event.data)
-//   closeConnection(websocket)
-// })
 
 export default defineComponent({
   name: 'app',
@@ -71,10 +33,13 @@ export default defineComponent({
   created () {
     const websocketUrl = 'ws://localhost:8888/echo/'
     const websocket:WebSocket = new WebSocket(websocketUrl)
+
     console.log('this is happening')
+
     this.connection = websocket
     this.status = this.statuscheck() || ''
     this.url = websocket.url
+
     websocket.addEventListener('open', (event) => {
       console.log('on open event', event)
       this.statuscheck()
@@ -94,6 +59,7 @@ export default defineComponent({
     join () {
       const websocketUrl = 'ws://localhost:8888/echo/'
       const websocket:WebSocket = new WebSocket(websocketUrl)
+
       this.connection = websocket
     },
     send () {
@@ -104,6 +70,7 @@ export default defineComponent({
     },
     statuscheck () {
       console.log(this.connection.readyState)
+
       switch (this.connection.readyState) {
         case 0:
           this.status = 'CONNECTING'
