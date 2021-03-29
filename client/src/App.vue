@@ -17,6 +17,7 @@
       <p style="color:DarkOrange">||| connection url  {{ url }}</p> -->
       <!-- <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="join()">join</button>
       <button style="background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="statuscheck()">status</button> -->
+      <p v-for="message in this.rx" :key="message" style="color:DarkOrange">|<span style="background-color:Black;padding: 2px 10px;outline:none;margin: 2px 2px;font-family:Courier New;color:DarkOrange;">{{ message }}</span></p>
       <input v-model="message" id="send_message" placeholder=">" autofocus=true size="110"/>
       <button onclick="document.getElementById('send_message').value = ''" style="position: bottom;background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="send()">send</button>
     </div>
@@ -28,7 +29,7 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'app',
   data () {
-    return { connection: WebSocket.prototype, status: '', url: '', message: '' }
+    return { connection: WebSocket.prototype, status: '', url: '', message: '', rx: [''] }
   },
   created () {
     const websocketUrl = 'ws://localhost:8888/echo/'
@@ -45,9 +46,11 @@ export default defineComponent({
       this.statuscheck()
     })
 
-    websocket.addEventListener('message', function (event) {
+    websocket.addEventListener('message', (event) => {
       console.log(event)
       console.log('Message from server ', event.data)
+      // this.receive(event)
+      this.dosomething(event.data)
     })
 
     websocket.addEventListener('close', (event) => {
@@ -64,6 +67,10 @@ export default defineComponent({
     },
     send () {
       this.connection.send(this.message)
+    },
+    dosomething (something: string) {
+      this.rx.push(something)
+      return this.rx
     },
     close () {
       this.connection.close(1000, 'goodbye!')
