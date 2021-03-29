@@ -55,12 +55,6 @@ export default defineComponent({
     })
   },
   methods: {
-    join () {
-      const websocketUrl = 'ws://localhost:8888/echo/'
-      const websocket:WebSocket = new WebSocket(websocketUrl)
-
-      this.connection = websocket
-    },
     send () {
       this.connection.send(this.message)
     },
