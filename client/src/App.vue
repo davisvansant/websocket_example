@@ -12,7 +12,7 @@
       >
       <p class="dark_orange">|||||| websocket client | {{ url }} |<button class="close_connection_button" v-on:click="close()">CLOSE CONNECTION</button>|</p>
       <p class="dark_orange">||||| connection status |<span class="connection_status">{{ status }}</span>|</p>
-      <hr style="height:1px;background-color:DimGrey">
+      <hr class="hr">
       <p v-for="message in this.rx_messages" :key="message" class="dark_orange">|<span class="rx_messages">{{ message }}</span></p>
       <input v-model="tx_message" id="tx_message" type="text" placeholder=">" autofocus=true size="110" @keyup.enter="send()"/>
       <button style="position: bottom;background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="send()">send</button>
@@ -122,6 +122,10 @@ export default defineComponent({
     margin: 2px 2px;
     font-family:Courier New;
     color:Black;
+  }
+  .hr {
+    height:1px;
+    background-color:DimGrey;
   }
   .rx_messages {
     background-color:Black;
