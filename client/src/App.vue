@@ -1,22 +1,13 @@
 <template>
   <img alt="Rusty!" src="./assets/error.png">
-  <div id="app" style="
-      background-color:black;
-      width: 800px;
-      height: 400px;
-      padding: 25px;
-      margin: 25px;
-      box-shadow:3px 3px 10px 0 rgba(0, 0, 0, 0.75);
-      font-family:Courier New;
-      color: white;"
-      >
+  <div id="console">
       <p class="dark_orange">|||||| websocket client | {{ url }} |<button class="close_connection_button" v-on:click="close()">CLOSE CONNECTION</button>|</p>
       <p class="dark_orange">||||| connection status |<span class="connection_status">{{ status }}</span>|</p>
       <hr class="hr">
       <p v-for="message in this.rx_messages" :key="message" class="dark_orange">|<span class="rx_messages">{{ message }}</span></p>
       <input v-model="tx_message" id="tx_message" type="text" placeholder=">" autofocus=true size="110" @keyup.enter="send()"/>
       <button class="send_button" v-on:click="send()">send</button>
-    </div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -102,6 +93,16 @@ export default defineComponent({
 <style>
   body {
     background: PapayaWhip;
+  }
+  #console {
+    background-color:black;
+    width: 800px;
+    height: 400px;
+    padding: 25px;
+    margin: 25px;
+    box-shadow:3px 3px 10px 0 rgba(0, 0, 0, 0.75);
+    font-family:Courier New;
+    color: white;
   }
   .dark_orange {
     color: DarkOrange;
