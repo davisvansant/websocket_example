@@ -15,7 +15,7 @@
       <hr class="hr">
       <p v-for="message in this.rx_messages" :key="message" class="dark_orange">|<span class="rx_messages">{{ message }}</span></p>
       <input v-model="tx_message" id="tx_message" type="text" placeholder=">" autofocus=true size="110" @keyup.enter="send()"/>
-      <button style="position: bottom;background-color:black;border:1px solid DarkOrange;padding: 10px 10px;outline:none;margin: 5px 5px;font-family:Courier New;color:DarkOrange;" v-on:click="send()">send</button>
+      <button class="send_button" v-on:click="send()">send</button>
     </div>
 </template>
 
@@ -132,6 +132,16 @@ export default defineComponent({
     padding: 2px 10px;
     outline:none;
     margin: 2px 2px;
+    font-family:Courier New;
+    color:DarkOrange;
+  }
+  .send_button {
+    position: bottom;
+    background-color:Black;
+    border:1px solid DarkOrange;
+    padding: 10px 10px;
+    outline:none;
+    margin: 5px 5px;
     font-family:Courier New;
     color:DarkOrange;
   }
