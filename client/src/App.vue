@@ -11,7 +11,7 @@
       color: white;"
       >
       <p class="dark_orange">|||||| websocket client | {{ url }} |<button class="close_connection_button" v-on:click="close()">CLOSE CONNECTION</button>|</p>
-      <p class="dark_orange">||||| connection status |<span style="background-color:DarkOrange;padding: 2px 109px;outline:none;margin: 2px 2px;font-family:Courier New;color:Black;">{{ status }}</span>|</p>
+      <p class="dark_orange">||||| connection status |<span class="connection_status">{{ status }}</span>|</p>
       <hr style="height:1px;background-color:DimGrey">
       <p v-for="message in this.rx_messages" :key="message" style="color:DarkOrange">|<span style="background-color:Black;padding: 2px 10px;outline:none;margin: 2px 2px;font-family:Courier New;color:DarkOrange;">{{ message }}</span></p>
       <input v-model="tx_message" id="tx_message" type="text" placeholder=">" autofocus=true size="110" @keyup.enter="send()"/>
@@ -114,5 +114,13 @@ export default defineComponent({
     margin: 5px 5px;
     font-family:Courier New;
     color:PapayaWhip;
+  }
+  .connection_status {
+    background-color:DarkOrange;
+    padding: 2px 109px;
+    outline:none;
+    margin: 2px 2px;
+    font-family:Courier New;
+    color:Black;
   }
 </style>
