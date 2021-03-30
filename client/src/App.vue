@@ -25,7 +25,13 @@ import { defineComponent } from 'vue'
 export default defineComponent({
   name: 'app',
   data () {
-    return { connection: WebSocket.prototype, status: '', url: '', message: '', rx: [''] }
+    return {
+      connection: WebSocket.prototype,
+      status: '',
+      url: '',
+      message: '',
+      rx: ['']
+    }
   },
   created () {
     const websocketUrl = 'ws://localhost:8888/echo/'
@@ -45,7 +51,7 @@ export default defineComponent({
     websocket.addEventListener('message', (event) => {
       console.log(event)
       console.log('Message from server ', event.data)
-      // this.receive(event)
+
       this.dosomething(event.data)
     })
 
