@@ -166,5 +166,9 @@ export default defineComponent({
     margin: 5px 5px;
     font-family:Courier New;
     color:PapayaWhip;
+    transition: background-color 1s;
+  }
+  .send_button:hover {
+    background-color: DarkOrange;
   }
 </style>
