@@ -165,6 +165,6 @@ export default defineComponent({
     outline:none;
     margin: 5px 5px;
     font-family:Courier New;
-    color:DarkOrange;
+    color:PapayaWhip;
   }
 </style>
