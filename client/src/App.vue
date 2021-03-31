@@ -65,7 +65,7 @@ export default defineComponent({
       console.log(event)
       console.log('Message from server ', event.data)
 
-      this.dosomething(event.data)
+      this.collect_message(event.data)
     })
 
     websocket.addEventListener('close', (event) => {
@@ -81,8 +81,8 @@ export default defineComponent({
 
       return this.tx_message
     },
-    dosomething (something: string) {
-      this.rx_messages.push(something)
+    collect_message (message: string) {
+      this.rx_messages.push(message)
 
       return this.rx_messages
     },
