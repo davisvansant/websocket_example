@@ -17,6 +17,7 @@
       <span class="rx_messages">{{ message }}</span>
     </p>
     <input
+      class="tx_message"
       v-model="tx_message"
       id="tx_message"
       type="text"
@@ -160,6 +161,9 @@ export default defineComponent({
     margin: 2px 2px;
     font-family:Courier New;
     color:DarkOrange;
+  }
+  .tx_message:focus ~ .send_button {
+    background-color: DarkOrange;
   }
   .send_button {
     position: bottom;
