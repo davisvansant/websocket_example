@@ -143,13 +143,29 @@ export default defineComponent({
     background-color: DarkOrange;
   }
   .connection_status {
-    background-color:DarkOrange;
-    padding: 2px 109px;
+    background: linear-gradient(90deg, Black, DimGrey, Black);
+    background-size: 800% 800%;
+    width: 250px;
+    display: inline-block;
+    text-align: center;
     outline:none;
+    border:1px solid DarkOrange;
     margin: 2px 2px;
     font-family:Courier New;
-    color:Black;
+    color:PapayaWhip;
+    animation: status_animation 15s ease-in-out infinite;
   }
+  @keyframes status_animation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
   .hr {
     height:1px;
     background-color:DimGrey;
