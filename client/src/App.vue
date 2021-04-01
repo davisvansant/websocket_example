@@ -12,10 +12,12 @@
       |
     </p>
     <hr class="hr">
-    <p v-for="message in this.rx_messages" :key="message" class="dark_orange">
+    <div id="rx_messages" class="rx_messages">
+      <p v-for="message in this.rx_messages" :key="message" class="dark_orange">
       |
-      <span class="rx_messages">{{ message }}</span>
-    </p>
+      <span>{{ message }}</span>
+      </p>
+    </div>
     <input
       class="tx_message"
       v-model="tx_message"
@@ -107,7 +109,17 @@ export default defineComponent({
           this.status = 'CLOSED'
           return this.status
       }
+    },
+    message_scroll () {
+      const element = document.getElementById('rx_messages')
+
+      if (element !== null) {
+        element.scrollTop = element.scrollHeight
+      }
     }
+  },
+  updated () {
+    this.$nextTick(() => this.message_scroll())
   }
 })
 </script>
@@ -177,6 +189,8 @@ export default defineComponent({
     margin: 2px 2px;
     font-family:Courier New;
     color:DarkOrange;
+    overflow-y: auto;
+    height: 250px;
   }
   .tx_message:focus ~ .send_button {
     background-color: DarkOrange;
