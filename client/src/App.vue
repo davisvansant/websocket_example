@@ -25,11 +25,11 @@
       type="text"
       placeholder=">"
       autofocus=true
-      size="110"
+      size="105"
       @keyup.enter="send()"
     />
     <button class="send_button" v-on:click="send()">
-      send
+      SEND
     </button>
   </div>
 </template>
@@ -199,9 +199,9 @@ export default defineComponent({
     position: bottom;
     background-color:Black;
     border:1px solid DarkOrange;
-    padding: 10px 10px;
+    padding: 5px 20px;
     outline:none;
-    margin: 5px 5px;
+    margin: 5px 15px;
     font-family:Courier New;
     color:PapayaWhip;
     transition: background-color 1s;
