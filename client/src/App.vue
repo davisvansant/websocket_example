@@ -8,7 +8,7 @@
     </p>
     <p class="dark_orange">
       ||||| connection status |
-      <span class="connection_status">{{ status }}</span>
+      <span id="connection_status" class="connection_status">{{ status }}</span>
       |
     </p>
     <hr class="hr">
@@ -90,6 +90,12 @@ export default defineComponent({
       return this.rx_messages
     },
     close () {
+      const element = document.getElementById('connection_status')
+
+      if (element !== null) {
+        element.style.animation = 'none'
+      }
+
       this.connection.close(1000, 'goodbye!')
     },
     statuscheck () {
