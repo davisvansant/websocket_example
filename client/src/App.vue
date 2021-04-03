@@ -94,6 +94,8 @@ export default defineComponent({
 
       if (element !== null) {
         element.style.animation = 'none'
+        element.style.background = 'DimGrey'
+        element.style.opacity = '0.33'
       }
 
       this.connection.close(1000, 'goodbye!')
